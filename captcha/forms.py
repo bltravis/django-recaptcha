@@ -19,13 +19,10 @@ class RegistrationFormCaptcha(RegistrationForm):
         remote_ip = cleaned_data.get('remote_ip')
         captcha = cleaned_data.get('captcha')
 
-        recaptcha_challenge_value = smart_unicode(values[0])
-        recaptcha_response_value = smart_unicode(values[1])
+        recaptcha_challenge_value = smart_unicode(self.cleaned_data['captcha'][0])
+        recaptcha_response_value = smart_unicode(self.cleaned_data['captcha'][1])
         
-        if 'RECAPTCHA_USE_SSL' in settings.__dict__.items()[0][1]:
-            use_ssl = settings.RECAPTCHA_USE_SSL
-        else:
-            use_ssl = False
+        use_ssl = getattr(settings, 'RECAPTCHA_USE_SSL', False)
             
         check_captcha = captcha.submit(recaptcha_challenge_value, 
             recaptcha_response_value, settings.RECAPTCHA_PRIVATE_KEY, remote_ip, use_ssl=use_ssl)
